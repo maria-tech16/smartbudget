@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 
 function SetBudget() {
   const navigate = useNavigate();
@@ -11,12 +11,16 @@ function SetBudget() {
       const token = localStorage.getItem("token");
       if (!token) return navigate("/login");
 
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/budget/get`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      try {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/budget/get`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-      const data = await res.json();
-      if (data.monthlyBudget) setBudget(data.monthlyBudget);
+        const data = await res.json();
+        if (data.monthlyBudget) setBudget(data.monthlyBudget);
+      } catch (err) {
+        console.error(err);
+      }
     };
 
     fetchBudget();
@@ -26,88 +30,60 @@ function SetBudget() {
     const token = localStorage.getItem("token");
     if (!token) return navigate("/login");
 
-    const res = await fetch(`${process.env.REACT_APP_API_URL}/api/budget/set`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ monthlyBudget: Number(budget) }),
-    });
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/budget/set`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ monthlyBudget: Number(budget) }),
+      });
 
-    const data = await res.json();
-    alert(data.message);
-    navigate("/dashboard");
-  };
-
-  const containerStyle = {
-    minHeight: "100vh",
-    background: "#FDF7FF",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    fontFamily: "Poppins, sans-serif",
-  };
-
-  const cardStyle = {
-    background: "#FFFFFF",
-    padding: "30px",
-    borderRadius: "16px",
-    boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
-    width: "350px",
-    textAlign: "center",
-  };
-
-  const inputStyle = {
-    width: "100%",
-    padding: "10px",
-    margin: "10px 0",
-    borderRadius: "10px",
-    border: "1px solid #ddd",
-  };
-
-  const buttonStyle = {
-    width: "100%",
-    padding: "10px",
-    marginTop: "10px",
-    borderRadius: "10px",
-    border: "none",
-    cursor: "pointer",
+      const data = await res.json();
+      alert(data.message);
+      navigate("/dashboard");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
-    <div style={containerStyle}>
-      <Navbar />
-      <div style={cardStyle}>
-        <h2 style={{ color: "#4A4A4A" }}>🎯 Set Monthly Budget</h2>
+    <div className="flex min-h-screen bg-gradient-to-br from-cyan-100 via-teal-50 to-blue-50 font-poppins">
+      <Sidebar />
+      <div className="ml-20 p-8 flex-1 flex items-center justify-center">
+        <div className="bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-lg w-96 text-center">
+          <h2 className="text-2xl font-bold mb-6 text-gray-800">🎯 Set Monthly Budget</h2>
 
-        <input
-          type="number"
-          value={budget}
-          onChange={(e) => setBudget(e.target.value)}
-          required
-          placeholder="Enter monthly amount"
-          style={inputStyle}
-        />
+          <input
+            type="number"
+            value={budget}
+            onChange={(e) => setBudget(e.target.value)}
+            placeholder="Enter monthly amount"
+            className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
 
-        <button
-          onClick={handleSave}
-          style={{ ...buttonStyle, background: "#A3D8CE", color: "#4A4A4A" }}
-        >
-          Save Budget
-        </button>
+          <button
+            onClick={handleSave}
+            className="w-full p-3 rounded-lg bg-blue-400 text-white font-semibold hover:bg-blue-500 transition mb-2"
+          >
+            Save Budget
+          </button>
 
-        <button
-          onClick={() => navigate("/dashboard")}
-          style={{ ...buttonStyle, background: "#F7C8E0", color: "#4A4A4A" }}
-        >
-          ⬅ Back to Dashboard
-        </button>
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="w-full p-3 rounded-lg bg-cyan-300 text-gray-800 font-semibold hover:bg-cyan-400 transition"
+          >
+            ⬅ Back to Dashboard
+          </button>
+        </div>
       </div>
     </div>
   );
 }
 
 export default SetBudget;
+
+
+
 

@@ -10,6 +10,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ✅ Log to confirm route file is loading
+console.log("✅ Budget routes loaded");
+
 // Routes
 app.use("/api/auth", require("./src/routes/auth"));
 app.use("/api/transaction", require("./src/routes/transactionRoutes"));

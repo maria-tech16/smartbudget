@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const verifyToken = require("../middleware/auth"); // make sure this exists
 
 const router = express.Router();
 
@@ -25,7 +26,22 @@ router.post("/register", async (req, res) => {
       password: hashedPassword,
     });
 
-    return res.json({ message: "Registration successful ✅" });
+    // ✅ Generate token immediately after registration
+    const token = jwt.sign(
+      { id: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    return res.json({
+      message: "Registration successful ✅",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Server error" });
@@ -64,6 +80,19 @@ router.post("/login", async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ✅ PROFILE ROUTE
+router.get("/profile", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json(user);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Error fetching profile" });
   }
 });
 

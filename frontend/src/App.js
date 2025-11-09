@@ -11,22 +11,36 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Redirect "/" to login */}
         <Route path="/" element={<Navigate to="/login" />} />
 
+        {/* Public routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/add-transaction" element={<AddTransaction />} />
-        <Route path="/transactions" element={<Transactions />} />
-        <Route path="/set-budget" element={<SetBudget />} />
 
-
-        {/* ✅ Protected Route */}
+        {/* Protected routes */}
         <Route
           path="/dashboard"
           element={
-            localStorage.getItem("token")
-              ? <Dashboard />
-              : <Navigate to="/login" />
+            localStorage.getItem("token") ? <Dashboard /> : <Navigate to="/login" />
+          }
+        />
+        <Route
+          path="/transactions"
+          element={
+            localStorage.getItem("token") ? <Transactions /> : <Navigate to="/login" />
+          }
+        />
+        <Route
+          path="/add-transaction"
+          element={
+            localStorage.getItem("token") ? <AddTransaction /> : <Navigate to="/login" />
+          }
+        />
+        <Route
+          path="/set-budget"
+          element={
+            localStorage.getItem("token") ? <SetBudget /> : <Navigate to="/login" />
           }
         />
       </Routes>

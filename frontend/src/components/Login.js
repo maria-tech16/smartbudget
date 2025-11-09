@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-console.log("API URL = ", process.env.REACT_APP_API_URL);
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -20,14 +19,12 @@ function Login() {
       );
 
       const data = await response.json();
-      console.log("Response:", data);
 
       if (response.ok && data.token) {
         alert("Login successful ✅");
         localStorage.setItem("token", data.token);
         window.location.href = "/dashboard";
-        } 
-         else {
+      } else {
         alert(data.message || "Invalid credentials ❌");
       }
     } catch (error) {
@@ -37,37 +34,47 @@ function Login() {
   };
 
   return (
-    <div style={{ width: "300px", margin: "80px auto" }}>
-      <h2>Login</h2>
+    <div className="min-h-screen bg-gradient-to-br from-cyan-100 via-teal-50 to-blue-50 flex items-center justify-center font-poppins">
+      <div className="bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-lg w-96 text-center">
+        <h2 className="text-3xl font-bold text-gray-800 mb-6">💰 BudgetEase Login</h2>
 
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Enter email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
-        />
+        <form onSubmit={handleLogin}>
+          <input
+            type="email"
+            placeholder="Enter email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
 
-        <input
-          type="password"
-          placeholder="Enter password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
-        />
+          <input
+            type="password"
+            placeholder="Enter password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
 
-        <button type="submit" style={{ width: "100%", padding: "8px" }}>
-          Login
-        </button>
-      </form>
+          <button
+            type="submit"
+            className="w-full p-3 rounded-lg bg-blue-400 text-white font-semibold hover:bg-blue-500 transition"
+          >
+            Login
+          </button>
+        </form>
 
-      {/* ✅ Moved inside */}
-      <p style={{ marginTop: "10px" }}>
-        Don't have an account? <a href="/register">Register</a>
-      </p>
+        <p className="text-gray-600 mt-4">
+          Don't have an account?{" "}
+          <span
+            className="text-blue-500 cursor-pointer hover:underline"
+            onClick={() => navigate("/register")}
+          >
+            Register
+          </span>
+        </p>
+      </div>
     </div>
   );
 }

@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
+import Sidebar from "../components/Sidebar";
 
 function AddTransaction() {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("expense");
   const [date, setDate] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     const token = localStorage.getItem("token");
 
     const res = await fetch(`${process.env.REACT_APP_API_URL}/api/transaction/add`, {
@@ -27,93 +28,61 @@ function AddTransaction() {
       setAmount("");
       setDate("");
     } else {
-      alert(data.message || "Something went wrong");
+      alert(data.message);
     }
   };
 
-  const pageStyle = {
-    minHeight: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    background: "#FDF7FF",
-    fontFamily: "Poppins, sans-serif",
-    flexDirection: "column",
-  };
-
-  const cardStyle = {
-    background: "#FFFFFF",
-    padding: "30px",
-    borderRadius: "16px",
-    boxShadow: "0px 6px 18px rgba(0, 0, 0, 0.08)",
-    width: "400px",
-  };
-
-  const inputStyle = {
-    width: "100%",
-    padding: "12px",
-    marginTop: "10px",
-    marginBottom: "18px",
-    borderRadius: "10px",
-    border: "1px solid #ddd",
-    fontSize: "15px",
-  };
-
-  const buttonStyle = {
-    width: "100%",
-    padding: "12px",
-    background: "#A3D8CE",
-    border: "none",
-    borderRadius: "10px",
-    color: "#4A4A4A",
-    fontSize: "17px",
-    cursor: "pointer",
-  };
-
   return (
-    <div style={pageStyle}>
-      <Navbar />
-      <div style={cardStyle}>
-        <h2 style={{ color: "#4A4A4A", marginBottom: "18px", textAlign: "center" }}>
-          ➕ Add Transaction
-        </h2>
+    <div className="flex min-h-screen bg-gradient-to-br from-cyan-100 via-teal-50 to-blue-50 font-poppins">
+      <Sidebar />
+      <div className="ml-20 p-8 flex-1 flex items-center justify-center">
+        <div className="bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-lg w-96 text-center">
+          <h2 className="text-2xl font-bold mb-6 text-gray-800">➕ Add Transaction</h2>
 
-        <form onSubmit={handleSubmit}>
           <input
-            style={inputStyle}
-            type="text"
-            placeholder="Title e.g. Food / Salary"
+            placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            required
+            className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
 
           <input
-            style={inputStyle}
-            type="number"
-            placeholder="Amount ₹"
+            placeholder="Amount"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            required
+            className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
 
-          <select style={inputStyle} value={type} onChange={(e) => setType(e.target.value)}>
-            <option value="expense">Expense</option>
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
             <option value="income">Income</option>
+            <option value="expense">Expense</option>
           </select>
 
           <input
-            style={inputStyle}
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            required
+            className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
 
-          <button style={buttonStyle} type="submit">
+          <button
+            onClick={handleSubmit}
+            className="w-full p-3 rounded-lg bg-blue-400 text-white font-semibold hover:bg-blue-500 transition mb-2"
+          >
             Save Transaction
           </button>
-        </form>
+
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="w-full p-3 rounded-lg bg-cyan-300 text-gray-800 font-semibold hover:bg-cyan-400 transition"
+          >
+            ⬅ Back to Dashboard
+          </button>
+        </div>
       </div>
     </div>
   );

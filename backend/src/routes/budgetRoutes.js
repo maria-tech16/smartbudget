@@ -1,32 +1,51 @@
 const express = require("express");
-const User = require("../models/User");
-const verifyToken = require("../middleware/auth"); // ✅ correct
-
 const router = express.Router();
+const Budget = require("../models/Budget");
+const auth = require("../middleware/auth");
 
-// ✅ Save / Update Monthly Budget
-router.post("/set", verifyToken, async (req, res) => {
+// ✅ Set or Update Monthly Budget
+router.post("/set", auth, async (req, res) => {
   try {
     const { monthlyBudget } = req.body;
+    const userId = req.user.id;
 
-    if (!monthlyBudget) {
-      return res.status(400).json({ message: "Budget value required" });
+    if (monthlyBudget == null) {
+      return res.status(400).json({ message: "Budget amount required" });
     }
 
-    await User.findByIdAndUpdate(req.user.id, { monthlyBudget });
-    res.json({ message: "✅ Monthly Budget Saved Successfully" });
+    let budget = await Budget.findOne({ userId });
+
+    if (budget) {
+      budget.monthlyBudget = monthlyBudget;
+      await budget.save();
+    } else {
+      budget = await Budget.create({ userId, monthlyBudget });
+    }
+
+    return res.json({
+      message: "✅ Budget saved successfully",
+      budget,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error saving budget" });
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
 // ✅ Get Monthly Budget
-router.get("/", verifyToken, async (req, res) => {
+router.get("/get", auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("monthlyBudget");
-    res.json({ monthlyBudget: user.monthlyBudget || 0 });
-  } catch {
-    res.status(500).json({ message: "Error fetching budget" });
+    const userId = req.user.id;
+    const budget = await Budget.findOne({ userId });
+
+    if (!budget) {
+      return res.json({ monthlyBudget: 0 });
+    }
+
+    return res.json(budget);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
   }
 });
 

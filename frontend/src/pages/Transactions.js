@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 
 function Transactions() {
   const [transactions, setTransactions] = useState([]);
@@ -9,22 +9,13 @@ function Transactions() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
+    if (!token) return navigate("/login");
 
     fetch(`${process.env.REACT_APP_API_URL}/api/transaction`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data.transactions)) {
-          setTransactions(data.transactions);
-        } else {
-          setTransactions([]);
-        }
-      })
+      .then((data) => setTransactions(Array.isArray(data.transactions) ? data.transactions : []))
       .catch((err) => console.log(err));
   }, [navigate]);
 
@@ -41,87 +32,54 @@ function Transactions() {
 
   const deleteTransaction = (id) => {
     const token = localStorage.getItem("token");
+
     fetch(`${process.env.REACT_APP_API_URL}/api/transaction/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then(() => {
-        setTransactions(transactions.filter((t) => t._id !== id));
-      })
+      .then(() => setTransactions(transactions.filter((t) => t._id !== id)))
       .catch((err) => console.log(err));
   };
 
-  const pageStyle = {
-    minHeight: "100vh",
-    background: "#FDF7FF",
-    padding: "30px",
-    fontFamily: "Poppins, sans-serif",
-  };
-
-  const listContainer = {
-    maxWidth: "600px",
-    background: "#FFFFFF",
-    padding: "20px",
-    borderRadius: "16px",
-    margin: "auto",
-    boxShadow: "0px 6px 16px rgba(0,0,0,0.08)",
-  };
-
-  const itemCard = {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: "14px",
-    margin: "10px 0",
-    borderRadius: "12px",
-    background: "#F7F9F8",
-    border: "1px solid #eee",
-  };
-
-  const deleteBtn = {
-    background: "#F7C8E0",
-    border: "none",
-    padding: "6px 12px",
-    borderRadius: "8px",
-    color: "#4A4A4A",
-    cursor: "pointer",
-  };
-
   return (
-    <div style={pageStyle}>
-      <Navbar />
-      <div style={listContainer}>
-        <h2 style={{ color: "#4A4A4A", textAlign: "center" }}>📄 Your Transactions</h2>
+    <div className="flex min-h-screen bg-gradient-to-br from-cyan-100 via-teal-50 to-blue-50 font-poppins">
+      <Sidebar />
+      <div className="ml-20 p-8 flex-1">
+        <h2 className="text-4xl font-bold mb-6 text-gray-800">📄 Transactions</h2>
 
         {budgetExceeded && (
-          <p
-            style={{
-              background: "#ffeaea",
-              color: "#d63031",
-              padding: "10px",
-              borderRadius: "8px",
-              marginBottom: "12px",
-              textAlign: "center",
-            }}
-          >
+          <p className="bg-rose-100 text-rose-500 p-4 rounded-md mb-6 border border-rose-300">
             ⚠️ You have exceeded your monthly budget!
           </p>
         )}
 
         {transactions.length === 0 ? (
-          <p style={{ textAlign: "center", paddingTop: "10px" }}>No transactions yet.</p>
+          <p className="text-gray-600">No transactions yet.</p>
         ) : (
-          transactions.map((t) => (
-            <div key={t._id} style={itemCard}>
-              <div>
-                <b>{t.title}</b> <br />
-                ₹{t.amount} • {t.type} <br />
-                <small>{new Date(t.date).toLocaleDateString()}</small>
+          <div className="flex flex-col gap-4">
+            {transactions.map((t) => (
+              <div
+                key={t._id}
+                className="bg-white/80 backdrop-blur-md p-4 rounded-xl shadow flex justify-between items-center"
+              >
+                <div>
+                  <b>{t.title}</b> <br />
+                  <span className={t.type === "income" ? "text-emerald-500" : "text-rose-500"}>
+                    ₹{t.amount} • {t.type}
+                  </span>
+                  <br />
+                  <small className="text-gray-500">{new Date(t.date).toLocaleDateString()}</small>
+                </div>
+
+                <button
+                  onClick={() => deleteTransaction(t._id)}
+                  className="bg-rose-500 text-white px-3 py-1 rounded-lg hover:bg-rose-600 transition"
+                >
+                  Delete
+                </button>
               </div>
-              <button style={deleteBtn} onClick={() => deleteTransaction(t._id)}>
-                Delete
-              </button>
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </div>
     </div>
@@ -129,9 +87,4 @@ function Transactions() {
 }
 
 export default Transactions;
-
-
-
-
-
 

@@ -44,7 +44,7 @@ function MonthlyReport() {
         const token = localStorage.getItem("token");
 
         const response = await fetch(
-          `http://localhost:5000/api/transaction/monthly?month=${month}`,
+          `https://smartbudget-dszl.onrender.com/api/transaction/monthly?month=${month}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -134,4 +134,3 @@ function MonthlyReport() {
 }
 
 export default MonthlyReport;
-

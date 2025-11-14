@@ -6,42 +6,48 @@ import Register from "./pages/Register";
 import AddTransaction from "./pages/AddTransaction";
 import Transactions from "./pages/Transactions";
 import SetBudget from "./pages/SetBudget";
+import Goals from "./pages/Goals";
+import PlannedPayments from "./pages/PlannedPayments";
+import MonthlyReport from "./pages/MonthlyReport";
 
 function App() {
+  const isAuth = !!localStorage.getItem("token");
+
   return (
     <BrowserRouter>
       <Routes>
-        {/* Redirect "/" to login */}
         <Route path="/" element={<Navigate to="/login" />} />
-
-        {/* Public routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
         {/* Protected routes */}
         <Route
           path="/dashboard"
-          element={
-            localStorage.getItem("token") ? <Dashboard /> : <Navigate to="/login" />
-          }
+          element={isAuth ? <Dashboard /> : <Navigate to="/login" />}
         />
         <Route
           path="/transactions"
-          element={
-            localStorage.getItem("token") ? <Transactions /> : <Navigate to="/login" />
-          }
+          element={isAuth ? <Transactions /> : <Navigate to="/login" />}
         />
         <Route
           path="/add-transaction"
-          element={
-            localStorage.getItem("token") ? <AddTransaction /> : <Navigate to="/login" />
-          }
+          element={isAuth ? <AddTransaction /> : <Navigate to="/login" />}
         />
         <Route
           path="/set-budget"
-          element={
-            localStorage.getItem("token") ? <SetBudget /> : <Navigate to="/login" />
-          }
+          element={isAuth ? <SetBudget /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/goals"
+          element={isAuth ? <Goals /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/planned-payments"
+          element={isAuth ? <PlannedPayments /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/monthly-report"
+          element={isAuth ? <MonthlyReport /> : <Navigate to="/login" />}
         />
       </Routes>
     </BrowserRouter>

@@ -1,6 +1,15 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Home, FileText, PlusCircle, PieChart, LogOut } from "lucide-react";
+import {
+  Home,
+  FileText,
+  PlusCircle,
+  PieChart,
+  Target,
+  CalendarDays,
+  BarChart3,
+  LogOut,
+} from "lucide-react";
 
 function Sidebar() {
   const navigate = useNavigate();
@@ -11,6 +20,9 @@ function Sidebar() {
     { icon: <FileText size={24} />, label: "Transactions", path: "/transactions" },
     { icon: <PlusCircle size={24} />, label: "Add Transaction", path: "/add-transaction" },
     { icon: <PieChart size={24} />, label: "Budget", path: "/set-budget" },
+    { icon: <BarChart3 size={24} />, label: "Monthly Report", path: "/monthly-report" },
+    { icon: <Target size={24} />, label: "Goals", path: "/goals" },
+    { icon: <CalendarDays size={24} />, label: "Planned Payments", path: "/planned-payments" },
   ];
 
   const handleLogout = () => {
@@ -20,11 +32,9 @@ function Sidebar() {
 
   return (
     <div className="fixed top-0 left-0 h-screen w-20 bg-gradient-to-b from-blue-500 via-teal-400 to-cyan-300 shadow-lg flex flex-col items-center justify-between py-6">
-      
       <div className="flex flex-col items-center">
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
-
           return (
             <div
               key={item.label}
@@ -56,4 +66,3 @@ function Sidebar() {
 }
 
 export default Sidebar;
-

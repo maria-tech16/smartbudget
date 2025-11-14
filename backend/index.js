@@ -17,6 +17,8 @@ console.log("✅ Budget routes loaded");
 app.use("/api/auth", require("./src/routes/auth"));
 app.use("/api/transaction", require("./src/routes/transactionRoutes"));
 app.use("/api/budget", require("./src/routes/budgetRoutes"));
+app.use("/api/goals", require("./src/routes/goalRoutes"));
+
 
 app.get("/", (req, res) => {
   res.send("SmartBudget backend running 🚀");
